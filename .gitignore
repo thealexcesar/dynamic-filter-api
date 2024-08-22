@@ -64,5 +64,5 @@ documents/
 */documents/
 
 # Credentials
-.env
+src/main/resources/.env
 */.env
