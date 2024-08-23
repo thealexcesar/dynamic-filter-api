@@ -1,6 +1,7 @@
 package com.dynamicfilteringapi.specifications;
 
 import com.dynamicfilteringapi.models.Order;
+import com.dynamicfilteringapi.models.StatusType;
 import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Predicate;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderSpecification {
+
     public static Specification<Order> filterOrders(
             String orderNumber,
             String customer,
@@ -23,7 +25,10 @@ public class OrderSpecification {
             List<Predicate> predicates = new ArrayList<>();
             if (orderNumber != null && !orderNumber.isEmpty()) predicates.add(criteriaBuilder.equal(root.get("orderNumber"), orderNumber));
             if (customer != null && !customer.isEmpty()) predicates.add(criteriaBuilder.like(root.get("customerName"), "%" + customer + "%"));
-            if (status != null && !status.isEmpty()) predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            if (status != null && !status.isEmpty()) {
+                StatusType statusType = StatusType.valueOf(status.toUpperCase());
+                predicates.add(criteriaBuilder.equal(root.get("status"), statusType));
+            }
             if (minAmount != null) predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("totalAmount"), minAmount));
             if (maxAmount != null) predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("totalAmount"), maxAmount));
             if (startDate != null) predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("orderDate"), startDate));
